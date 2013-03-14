@@ -1,0 +1,23 @@
+{
+  "name": "github-latest",
+  "version": "0.1.0",
+  "description": "get the latest (semver) tag number of a repo",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tmpvar/github-latest.git"
+  },
+  "keywords": [
+    "github",
+    "latest",
+    "tag"
+  ],
+  "author": "Elijah Insua <tmpvar@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "semver": "~1.1.4"
+  }
+}
