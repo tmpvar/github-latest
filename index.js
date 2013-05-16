@@ -14,13 +14,15 @@ module.exports = function(username, repo, fn) {
     }
   }, function(res) {
     var data = '';
-    
+
     res.on('end', function() {
       try {
-        var tags = JSON.parse(data).map(function(item){
-          return item.ref.split('/').pop();
-        })
-        tags.sort(semver.rcompare);
+        var tags = JSON.parse(data)
+          .map(function(item){
+            return item.ref.split('/').pop();
+          })
+          .filter(semver.valid)
+          .sort(semver.rcompare);
       } catch (e) {
         fn(e);
       }
