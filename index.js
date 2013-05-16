@@ -13,6 +13,9 @@ module.exports = function(username, repo, fn) {
       'user-agent': 'https://npmjs.org/package/github-latest'
     }
   }, function(res) {
+    if(!(/^200/).test(res.headers.status))
+      return fn(new Error(res.headers.status))
+
     var data = '';
 
     res.on('end', function() {
