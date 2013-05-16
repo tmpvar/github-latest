@@ -27,7 +27,7 @@ module.exports = function(username, repo, fn) {
           .filter(semver.valid)
           .sort(semver.rcompare);
       } catch (e) {
-        fn(e);
+        return fn(e);
       }
       fn(null, tags[0]);
     });
