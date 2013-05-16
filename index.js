@@ -5,7 +5,7 @@ var https = require('https'),
 module.exports = function(username, repo, fn) {
   var path = ["/repos", username, repo, 'git/refs/tags/'].join('/');
 
-  var req = https.request({
+  https.request({
     host: 'api.github.com',
     path: path,
     port: 443,
@@ -34,10 +34,7 @@ module.exports = function(username, repo, fn) {
     res.on('data', function(chunk) {
       data += chunk +'';
     });
-  });
-
-  req.end();
-  req.on('error', function(e) {
-    fn(e);
-  });
+  })
+  .on('error', fn)
+  .end();
 };
