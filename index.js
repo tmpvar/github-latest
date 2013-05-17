@@ -1,44 +1,41 @@
 var https = require('https'),
-    semver = require('semver'),
-    VERSION = require('./package.json').version;
+    semver = require('semver')
 
 module.exports = function(username, repo, fn) {
-  var path = ["/repos", username, repo, 'git/refs/tags/'].join('/');
+  var path = ['/repos', username, repo, 'git/refs/tags/'].join('/');
 
-  var req = https.request({
+  https.request({
     host: 'api.github.com',
     path: path,
     port: 443,
     method: 'GET',
     headers: {
-      'user-agent': 'https://npmjs.org/github-latest ' + VERSION
+      'user-agent': 'https://npmjs.org/package/github-latest'
     }
   }, function(res) {
+    if(!(/^200/).test(res.headers.status))
+      return fn(new Error(res.headers.status))
 
     var data = '';
+
     res.on('end', function() {
       try {
-        var obj = JSON.parse(data);
-        obj.sort(function(a, b) {
-          var aref = a.ref.split('/').pop();
-          var bref = b.ref.split('/').pop();
-          return semver.gt(aref, bref) ? -1 : 1;
-        });
-
-        fn(null, obj.shift().ref.split('/').pop());
+        var tags = JSON.parse(data)
+          .map(function(item){
+            return item.ref.split('/').pop();
+          })
+          .filter(semver.valid)
+          .sort(semver.rcompare);
       } catch (e) {
-        fn(e);
+        return fn(e);
       }
+      fn(null, tags[0]);
     });
 
     res.on('data', function(chunk) {
-      data += chunk +'';
+      data += chunk;
     });
-    console.log('connecting')
-  });
-
-  req.end();
-  req.on('error', function(e) {
-    fn(e);
-  });
+  })
+  .on('error', fn)
+  .end();
 };
