@@ -1,6 +1,6 @@
 {
   "name": "github-latest",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "get the latest (semver) tag number of a repo",
   "main": "index.js",
   "directories": {
