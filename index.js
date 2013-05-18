@@ -13,10 +13,15 @@ module.exports = function(username, repo, fn) {
       'user-agent': 'https://npmjs.org/package/github-latest'
     }
   }, function(res) {
+    var data = '';
+
+    // data has to be read
+    res.on('data', function(chunk) {
+      data += chunk;
+    });
+
     if(!(/^200/).test(res.headers.status))
       return fn(new Error(res.headers.status))
-
-    var data = '';
 
     res.on('end', function() {
       try {
@@ -30,10 +35,6 @@ module.exports = function(username, repo, fn) {
         return fn(e);
       }
       fn(null, tags[0]);
-    });
-
-    res.on('data', function(chunk) {
-      data += chunk;
     });
   })
   .on('error', fn)
