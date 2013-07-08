@@ -1,23 +1,37 @@
-var https = require('https'),
-    semver = require('semver')
+
+var encode = require('urlsafe-base64').encode
+  , semver = require('semver')
+  , https = require('https')
+
+var username = process.env.GITHUB_USERNAME
+var password = process.env.GITHUB_PASSWORD
+
+var headers = {'user-agent': 'https://npmjs.org/package/github-latest'}
+
+if (username && password) {
+  var details = encode(new Buffer(username+':'+ password))
+  headers.authorization = 'Basic ' + details + '=='
+}
 
 module.exports = function(username, repo, fn) {
-  var path = ['/repos', username, repo, 'git/refs/tags/'].join('/');
+  var path = ''
+    + '/repos/' + username
+    + '/' + repo
+    + '/git/refs/tags/'
 
   https.request({
     host: 'api.github.com',
     path: path,
     port: 443,
     method: 'GET',
-    headers: {
-      'user-agent': 'https://npmjs.org/package/github-latest'
-    }
+    headers: headers,
+    agent: false
   }, function(res) {
-    var data = '';
+    var data = ''
 
     // data has to be read
     res.on('data', function(chunk) {
-      data += chunk;
+      data += chunk
     });
 
     if(!(/^200/).test(res.headers.status))
@@ -27,16 +41,16 @@ module.exports = function(username, repo, fn) {
       try {
         var tags = JSON.parse(data)
           .map(function(item){
-            return item.ref.split('/').pop();
+            return item.ref.split('/').pop()
           })
           .filter(semver.valid)
-          .sort(semver.rcompare);
+          .sort(semver.rcompare)
       } catch (e) {
-        return fn(e);
+        return fn(e)
       }
-      fn(null, tags[0]);
-    });
+      fn(null, tags[0])
+    })
   })
   .on('error', fn)
-  .end();
-};
+  .end()
+}

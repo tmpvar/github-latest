@@ -18,6 +18,11 @@
   "author": "Elijah Insua <tmpvar@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "semver": "~1.1.4"
+    "semver": "~1.1.4",
+    "urlsafe-base64":"0.0.2"
+  },
+  "devDependencies": {
+    "chai": "1.7.2",
+    "mocha": "1.12.0"
   }
 }
