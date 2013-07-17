@@ -1,6 +1,5 @@
 
-var encode = require('urlsafe-base64').encode
-  , semver = require('semver')
+var semver = require('semver')
   , https = require('https')
 
 var username = process.env.GITHUB_USERNAME
@@ -9,8 +8,11 @@ var password = process.env.GITHUB_PASSWORD
 var headers = {'user-agent': 'https://npmjs.org/package/github-latest'}
 
 if (username && password) {
-  var details = encode(new Buffer(username+':'+ password))
-  headers.authorization = 'Basic ' + details + '=='
+  headers.authorization = 'Basic ' + encode(username+':'+ password)
+}
+
+function encode(str){
+  return new Buffer(str).toString('base64')
 }
 
 module.exports = function(username, repo, fn) {
