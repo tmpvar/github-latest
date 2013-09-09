@@ -17,7 +17,6 @@
     "semver": "2.1.0"
   },
   "devDependencies": {
-    "chai": "1.7.2",
     "mocha": "1.12.1"
   },
   "engines": {
